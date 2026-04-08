@@ -2,6 +2,68 @@
     CodeBehind="CODY_Lista.aspx.cs" Inherits="STOD_Web.CODY_Lista" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    
+    <style>
+        #loaderPantalla {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 99999; /* Para que quede por encima de todo */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+        }
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .circulo {
+            border: 8px solid #f3f3f3; /* Gris claro */
+            border-top: 8px solid #3498db; /* Azul */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: girar 1s linear infinite;
+            margin: 0 auto 15px auto;
+        }
+        @keyframes girar {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <div id="loaderPantalla">
+        <div class="spinner">
+            <div class="circulo"></div>
+            <h3>Cargando registros...</h3>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        /**** INICIO DE SCRIPTS DEL LOADER ******/
+        // 1. Mostrar loader cuando se hace clic en botones normales (Grabar, etc.)
+        window.addEventListener("submit", function () {
+            document.getElementById("loaderPantalla").style.display = "block";
+        });
+
+        // 2. Mostrar loader cuando ASP.NET hace un AutoPostBack (Dropdown o Paginación del GridView)
+        window.onload = function () {
+            if (typeof window.__doPostBack === 'function') {
+                var oldPostBack = window.__doPostBack;
+                window.__doPostBack = function (eventTarget, eventArgument) {
+                    document.getElementById("loaderPantalla").style.display = "block";
+                    oldPostBack(eventTarget, eventArgument);
+                };
+            }
+        };
+        /**** FIN DE SCRIPTS DEL LOADER ******/
+    </script>
     <div id="divDatos" style="margin: 0 auto 0 auto; width: 780px;" runat="server">
         
         <table width="100%">
@@ -22,6 +84,7 @@
                 </td>
             </tr>
         </table>
+        
         <asp:GridView ID="GridViewLista" runat="server" AllowPaging="True" AutoGenerateColumns="False"
             CssClass="mGrid" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
             DataKeyNames="Lista,ItemCode" DataSourceID="ODSLista" PageSize="100" 
